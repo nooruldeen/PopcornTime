@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/popcorn_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:fitsSystemWindows="true"
+    tools:openDrawer="start">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <!-- TODO (6) Create Popcorn Movies Activity to display the list of movie cards -->
+    <!-- TODO (7) Naming Convention - super:activity_name this:name_[super_activity]_this -->
 
-</android.support.constraint.ConstraintLayout>
+    <include
+        layout="@layout/main_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</android.support.v4.widget.DrawerLayout>

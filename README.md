@@ -13,7 +13,7 @@ Developed by Nooruldeen Alsaif
 
 
 ### Attribution 
-[Retrofit2](https://)
+[Retrofit2 tutorial](https://code.tutsplus.com/tutorials/getting-started-with-retrofit-2--cms-27792)
 
 [](https://)
 

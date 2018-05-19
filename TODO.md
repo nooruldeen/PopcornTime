@@ -6,6 +6,9 @@
 - [x] Folder organization
 	- [ ] Java
 	- [ ] Resources
+		- [ ] Layouts
+		- [ ] Values
+		- [ ] Styles
 - [ ] Activities
 	- [ ] Main Acitvity
 	- [ ] Details Acitivty
