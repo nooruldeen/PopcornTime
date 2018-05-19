@@ -20,4 +20,8 @@
     <string name="option_sort_key">sort_by</string>
     <string name="option_sort_value_1">Top Rated</string>
     <string name="option_sort_value_2">Most Popular</string>
+    <string name="title_activity_bottom_nav_main">Popcorn Time</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
 </resources>

@@ -1,9 +1,11 @@
 package io.bigsoft.android.popcorntime;
 
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -92,7 +94,12 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             }
         });
 
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+        RecyclerView.LayoutManager layoutManager = null;
+        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
+            layoutManager = new GridLayoutManager(this,5);
+        } else {
+            layoutManager = new GridLayoutManager(this,3);
+        }
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setHasFixedSize(true);

@@ -9,8 +9,8 @@
     <dimen name="title">16dp</dimen>
     <dimen name="title_padding">10dp</dimen>
     <dimen name="title_cover_height">160dp</dimen>
-    <dimen name="card_radius">0dp</dimen>
-    <dimen name="card_margin">0dp</dimen>
+    <dimen name="card_radius">4dp</dimen>
+    <dimen name="card_margin">5dp</dimen>
     <dimen name="detail_backdrop_height">500dp</dimen>
     <dimen name="layout_margin_top">2dp</dimen>
     <dimen name="layout_margin_top_extra">8dp</dimen>
@@ -19,4 +19,5 @@
     <dimen name="layout_padding">16dp</dimen>
     <dimen name="card_image_height">150dp</dimen>
     <dimen name="title_font_size">12sp</dimen>
+    <dimen name="card_font_size">8sp</dimen>
 </resources>
