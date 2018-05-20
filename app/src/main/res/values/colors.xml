@@ -6,4 +6,11 @@
     <color name="colorBackground">#F1F5F8</color>
     <color name="colorTitle">#4C4C4C</color>
     <color name="colorWhite">#FFF</color>
+    <color name="colorAccentDark">#263238</color>
+    <color name="movie_pressed">#40000000</color>
+    <color name="movie_normal">#00ffffff</color>
+    <color name="rating_yellow">#FFC107</color>
+    <color name="light_text">#FFFFFF</color>
+    <color name="light_gray_background">#E0E0E0</color>
+    <color name="dark_background">#37474F</color>
 </resources>

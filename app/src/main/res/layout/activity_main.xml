@@ -5,14 +5,47 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="8dp"
+    android:id="@+id/popcorn_layout"
+    android:orientation="vertical"
     tools:context="io.bigsoft.android.popcorntime.MainActivity">
 
+    <!-- TODO (8) Create popcorn main layout that will hold the AppBarLayout -->
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:background="?attr/colorPrimary"
+            app:layout_collapseMode="parallax"
+            app:popupTheme="@style/AppTheme.PopupOverlay"
+            android:layout_height="0dp" />
+
+    </android.support.design.widget.AppBarLayout>
+
+    <!-- TODO (9) Create popcorn main content layout that will hold the RecyclerView -->
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_contents"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent" />
 
-    </android.support.v7.widget.RecyclerView>
+
+    <TextView
+        android:id="@+id/tv_error_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="18dp"
+        android:text="@string/error_message"
+        android:textSize="18sp"
+        android:visibility="invisible" />
+
+    <ProgressBar
+        android:id="@+id/pb_contents_loading"
+        android:layout_height="40dp"
+        android:layout_width="40dp"
+        android:layout_gravity="center"
+        android:visibility="invisible" />
 
 </LinearLayout>

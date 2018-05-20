@@ -13,10 +13,9 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import io.bigsoft.android.popcorntime.DetailActivity;
+import io.bigsoft.android.popcorntime.DetailsActivity;
 import io.bigsoft.android.popcorntime.R;
 import io.bigsoft.android.popcorntime.model.Movie;
 
@@ -26,6 +25,15 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
     private Context mContext;
     private List<Movie> mList;
     private PostMoviesListener mMoviesListener;
+
+    public final static String MOVIE_INTENT_KEY = "movie";
+    public final static String POSTER_INTENT_KEY = "poster";
+    public final static String OVERVIEW_INTENT_KEY = "overview";
+    public final static String TITLE_INTENT_KEY = "title";
+    public final static String RELEASE_DATE_INTENT_KEY = "release_date";
+    public final static String VOTE_INTENT_KEY = "vote_average";
+    public final static String POPULARITY_INTENT_KEY = "popularity";
+
 
     public MoviesAdapter(Context context, List<Movie> moviesList, PostMoviesListener moviesLisener) {
         this.mContext = context;
@@ -37,7 +45,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
     @Override
     public MoviesAdapter.MoviesViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.main_contents_card, parent, false);
+                .inflate(R.layout.main_card, parent, false);
 
         return new MoviesViewHolder(view);
     }
@@ -79,8 +87,14 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
                     int position = getAdapterPosition();
                     if (position != RecyclerView.NO_POSITION){
                         Movie clickedDataItem = mList.get(position);
-                        Intent intent = new Intent(mContext, DetailActivity.class);
-                        intent.putExtra("movies", clickedDataItem );
+                        Intent intent = new Intent(mContext, DetailsActivity.class);
+//                        intent.putExtra(MOVIE_INTENT_KEY, clickedDataItem );
+                        intent.putExtra(TITLE_INTENT_KEY, clickedDataItem.getTitle());
+                        intent.putExtra(POSTER_INTENT_KEY, clickedDataItem.getPosterPath());
+                        intent.putExtra(RELEASE_DATE_INTENT_KEY, clickedDataItem.getReleaseDate());
+                        intent.putExtra(OVERVIEW_INTENT_KEY, clickedDataItem.getOverview());
+                        intent.putExtra(POPULARITY_INTENT_KEY, clickedDataItem.getPopularity());
+                        intent.putExtra(VOTE_INTENT_KEY, clickedDataItem.getVoteAverage());
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         mContext.startActivity(intent);
                         Toast.makeText(v.getContext(), "You clicked " + clickedDataItem.getOriginalTitle(), Toast.LENGTH_SHORT).show();
