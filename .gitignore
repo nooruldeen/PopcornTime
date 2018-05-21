@@ -10,3 +10,4 @@
 .externalNativeBuild
 .idea/dictionaries/
 app/libs/
+/gradle.properties
