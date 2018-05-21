@@ -23,7 +23,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
 
 
     private Context mContext;
-    private List<Movie> mList;
+    private static List<Movie> mList;
     private PostMoviesListener mMoviesListener;
 
     public final static String MOVIE_INTENT_KEY = "movie";
@@ -106,5 +106,9 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
 
     public interface PostMoviesListener{
         void onPostClick(long id);
+    }
+
+    public void ClearList(){
+        mList.clear();
     }
 }

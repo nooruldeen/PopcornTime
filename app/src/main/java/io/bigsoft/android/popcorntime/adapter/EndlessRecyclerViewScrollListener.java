@@ -5,6 +5,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 
+import io.bigsoft.android.popcorntime.MainActivity;
+
 public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnScrollListener {
 
 
@@ -97,7 +99,7 @@ public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnS
 
     // Call this method whenever performing new searches
     public void resetState() {
-        this.currentPage = this.startingPageIndex;
+        this.currentPage = 1;
         this.previousTotalItemCount = 0;
         this.loading = true;
     }

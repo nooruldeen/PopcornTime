@@ -3,15 +3,14 @@ package io.bigsoft.android.popcorntime;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Parcelable;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
-import android.widget.TextView;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -33,11 +32,17 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     private MoviesAdapter mAdapter;
     private TMDBService mService;
     private RecyclerView mRecyclerView;
+    private Toolbar mToolbar;
     private Parcelable mSavedState;
     private EndlessRecyclerViewScrollListener scrollListener;
+    private String mSortType;
 
     private static final String LIFECYCLE_CALLBACK_TEXT_KEY = "callback";
-    private static final String SEARCH_QUERY_URL_EXTRA = "sortType";
+    private static final int API_DEFAULT_PAGE =1;
+    private static final String SEARCH_QUERY_KEY = "sortType";
+    private static final String POPULAR_SORT_TYPE = "popular";
+    private static final String TOP_RATED_SORT_TYPE = "top_rated";
+
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -90,7 +95,10 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
         mService = ApiUtilities.getTMDBService();
         mRecyclerView = (RecyclerView) findViewById(R.id.rv_contents);
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mSortType = POPULAR_SORT_TYPE;
 
+        setSupportActionBar(mToolbar);
         mAdapter = new MoviesAdapter(this, new ArrayList<Movie>(0), new MoviesAdapter.PostMoviesListener() {
 
             @Override
@@ -114,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setHasFixedSize(true);
-        loadMovies(1);
+        loadMovies(API_DEFAULT_PAGE, mSortType);
 
         //        Log.d(TAG, "onCreate: registering preference changed listener");
         scrollListener = new EndlessRecyclerViewScrollListener((GridLayoutManager) layoutManager) {
@@ -125,7 +133,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 //                loadNextDataFromApi(page);
                 Log.d(TAG, "EndlessRecyclerViewScrollListener: Inside scrollListener. Page: "+page);
 
-                loadMovies(page);
+                loadMovies(page, mSortType);
                 view.post(new Runnable() {
                     @Override
                     public void run() {
@@ -143,8 +151,24 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     }
 
-    public void loadMovies(int offset) {
-        mService.getPopularMovies(BuildConfig.THEMOVIEDB_API_KEY, offset).enqueue(new Callback<MovieResponses>() {
+
+
+    public void loadMovies(int offset, String sortType) {
+
+        Call<MovieResponses> movieResponsesCall = mService.getPopularMovies(BuildConfig.THEMOVIEDB_API_KEY, offset);
+
+        switch (sortType){
+            case POPULAR_SORT_TYPE:{
+                movieResponsesCall = mService.getPopularMovies(BuildConfig.THEMOVIEDB_API_KEY, offset);
+                break;
+            }
+            case TOP_RATED_SORT_TYPE:{
+                movieResponsesCall = mService.getTopRatedMovies(BuildConfig.THEMOVIEDB_API_KEY, offset);
+                break;
+            }
+
+        }
+        movieResponsesCall.enqueue(new Callback<MovieResponses>() {
             @Override
             public void onResponse(Call<MovieResponses> call, Response<MovieResponses> response) {
 
@@ -175,5 +199,33 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.popcorn_menu,menu);
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()){
+            case R.id.popular_action:
+                if (mSortType!=POPULAR_SORT_TYPE){
+                    mSortType=POPULAR_SORT_TYPE;
+                    mAdapter.ClearList();
+                    mAdapter.notifyDataSetChanged();
+                    scrollListener.resetState();
+                    loadMovies(API_DEFAULT_PAGE, mSortType);
+                }
+                break;
+            case R.id.top_rated_action:
+                if (mSortType!=TOP_RATED_SORT_TYPE){
+                    mSortType=TOP_RATED_SORT_TYPE;
+                    mAdapter.ClearList();
+                    mAdapter.notifyDataSetChanged();
+                    scrollListener.resetState();
+                    loadMovies(API_DEFAULT_PAGE, mSortType);
+                }
+                break;
+        }
+
+
+        return super.onOptionsItemSelected(item);
     }
 }

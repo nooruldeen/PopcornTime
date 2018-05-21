@@ -12,13 +12,13 @@
 - [x] Activities
 	- [ ] Main Acitvity
 		- [ ] Save state on rotation
-		- [ ] Sort type buttons
+		- [X] Sort type buttons
 		- [x] CardView
 		- [x] GridViewLayout
 		- [x] Endless scrolling
 	- [x] Details Acitivty
 		- [ ] Back button
-		- [ ] Display Poster, title, average vote, release date, plot synopsis (Overview)
+		- [x] Display Poster, title, average vote, release date, plot synopsis (Overview)
 - [x] Network Utilities
 - [x] Adapter
 - [x] API
