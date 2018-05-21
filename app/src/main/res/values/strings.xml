@@ -1,3 +1,28 @@
 <resources>
-    <string name="app_name">PopcornTime</string>
+    <string name="app_name">Movies and Shows</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <!-- TODO (4) Set Strings -->
+    <string name="movie_plot_synopsis">Plot Synopsis</string>
+    <string name="movie_title">Movie Title</string>
+    <string name="release_date">1/1/2018</string>
+    <string name="tv_show_details">TV Show Details</string>
+    <string name="error_message">Something went wrong!</string>
+    <string name="action_most_popular">Most Popular</string>
+    <string name="action_top_rated">Top Rated</string>
+
+    <string name="option_sort_label">Sort By</string>
+    <string name="option_sort_key">sort_by</string>
+    <string name="option_sort_value_1">Top Rated</string>
+    <string name="option_sort_value_2">Most Popular</string>
+    <string name="title_activity_bottom_nav_main">Popcorn Time</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="no_content">No content to display</string>
 </resources>
