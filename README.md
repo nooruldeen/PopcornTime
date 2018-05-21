@@ -7,9 +7,8 @@ Developed by Nooruldeen Alsaif
 
 ## Featuring 
 * Discover popular and top rated Movies powered by The Movie Database (TMDb)
-* Adopted event-based programming with RxJava utilizing Observable streams
-* Implementation of asynchronous calls and multi-threaded operations to enable smooth functionality
-* Utilization of Material design principles and interactive Android Animation Libraries
+* Endless scrolling using Grid Layout and Retrofit 2
+* Menu option buttons to switch between popular and top rated movies
 
 
 ### Attribution 
