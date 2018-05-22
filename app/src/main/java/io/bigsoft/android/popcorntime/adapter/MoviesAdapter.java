@@ -26,7 +26,6 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
     private static List<Movie> mList;
     private PostMoviesListener mMoviesListener;
 
-    public final static String MOVIE_INTENT_KEY = "movie";
     public final static String POSTER_INTENT_KEY = "poster";
     public final static String OVERVIEW_INTENT_KEY = "overview";
     public final static String TITLE_INTENT_KEY = "title";

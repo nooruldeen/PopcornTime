@@ -9,7 +9,7 @@
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="350dp"
         android:fitsSystemWindows="true">
 
         <android.support.design.widget.CollapsingToolbarLayout
@@ -35,13 +35,15 @@
                 android:id="@+id/tb_details_activity"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:layout_gravity="top"
-                android:paddingEnd="8dp"
-                android:paddingStart="8dp"
-                app:layout_collapseMode="parallax">
-
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:background="?attr/colorPrimary"
+                android:minHeight="?attr/actionBarSize"
+                app:theme="@style/ThemeOverlay.AppCompat.Dark">
             </android.support.v7.widget.Toolbar>
+
         </android.support.design.widget.CollapsingToolbarLayout>
+
     </android.support.design.widget.AppBarLayout>
 
     <android.support.v4.widget.NestedScrollView
@@ -61,7 +63,7 @@
                 style="@style/AppTheme.Subtitles"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Title" />
+                tools:text="Title" />
 
             <View xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
@@ -86,13 +88,15 @@
                     android:weightSum="4">
 
                     <TextView
-                        android:id="@+id/tv_popularity"
+                        android:id="@+id/tv_rating_label"
                         android:layout_width="18dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_weight="1"
                         android:drawablePadding="8dp"
-                        android:gravity="center" />
+                        android:textSize="16sp"
+                        android:gravity="center"
+                        android:text="@string/rating_label"/>
 
 
                     <FrameLayout

@@ -25,4 +25,5 @@
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
     <string name="no_content">No content to display</string>
+    <string name="rating_label">Rating</string>
 </resources>

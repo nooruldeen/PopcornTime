@@ -1,5 +1,6 @@
 package io.bigsoft.android.popcorntime;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Parcelable;
@@ -11,6 +12,9 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -33,6 +37,9 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     private TMDBService mService;
     private RecyclerView mRecyclerView;
     private Toolbar mToolbar;
+    private TextView mErrorMessage;
+    private Context mContext;
+    private ProgressBar mProgressBar;
     private Parcelable mSavedState;
     private EndlessRecyclerViewScrollListener scrollListener;
     private String mSortType;
@@ -93,6 +100,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
 //        RecyclerView mRecyclerView;
 
+        mContext = this;
         mService = ApiUtilities.getTMDBService();
         mRecyclerView = (RecyclerView) findViewById(R.id.rv_contents);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -153,7 +161,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
 
 
-    public void loadMovies(int offset, String sortType) {
+    public void loadMovies(final int offset, String sortType) {
 
         Call<MovieResponses> movieResponsesCall = mService.getPopularMovies(BuildConfig.THEMOVIEDB_API_KEY, offset);
 
@@ -174,18 +182,22 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
                 if(response.isSuccessful()) {
                     mAdapter.updateMovies(response.body().getMovies());
-                    Log.d("MainActivity", "posts loaded from API");
+
                 }else {
                     int statusCode  = response.code();
+                    mErrorMessage.setText("Check your settings and Internet connection and try again. \n"+"Error: "+ statusCode);
+
                     // handle request errors depending on status code
+                    (Toast.makeText(mContext, "Check your connection and try again!", Toast.LENGTH_SHORT)).show();
                 }
             }
 
             @Override
             public void onFailure(Call<MovieResponses> call, Throwable t) {
-//                showErrorMessage();
-                Log.d("MainActivity", "error loading from API");
+                mErrorMessage.setText("Check your settings and Internet connection and try again.");
 
+                // handle request errors depending on status code
+                (Toast.makeText(mContext, "Check your connection and try again!", Toast.LENGTH_SHORT)).show();
             }
         });
     }
@@ -228,4 +240,5 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
         return super.onOptionsItemSelected(item);
     }
+
 }
