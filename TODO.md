@@ -18,7 +18,7 @@
 		- [x] Endless scrolling
 		- [x] Error Handling
 	- [x] Details Acitivty
-		- [ ] Back button
+		- [x] Back button
 		- [x] Display Poster, title, average vote, release date, plot synopsis (Overview)
 - [x] Network Utilities
 - [x] Adapter

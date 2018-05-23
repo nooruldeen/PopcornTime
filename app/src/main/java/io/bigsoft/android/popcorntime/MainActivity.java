@@ -37,16 +37,14 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     private TMDBService mService;
     private RecyclerView mRecyclerView;
     private Toolbar mToolbar;
-    private TextView mErrorMessage;
     private Context mContext;
-    private ProgressBar mProgressBar;
     private Parcelable mSavedState;
     private EndlessRecyclerViewScrollListener scrollListener;
     private String mSortType;
 
     private static final String LIFECYCLE_CALLBACK_TEXT_KEY = "callback";
+    private static final String SCROLL_POSITION_KEY = "position";
     private static final int API_DEFAULT_PAGE =1;
-    private static final String SEARCH_QUERY_KEY = "sortType";
     private static final String POPULAR_SORT_TYPE = "popular";
     private static final String TOP_RATED_SORT_TYPE = "top_rated";
 
@@ -57,10 +55,10 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
         if (mRecyclerView != null) {
             // Save list state
-            mSavedState = mRecyclerView.getLayoutManager().onSaveInstanceState();
             outState.putParcelable(LIFECYCLE_CALLBACK_TEXT_KEY, mRecyclerView.getLayoutManager().onSaveInstanceState());
+            outState.putInt(SCROLL_POSITION_KEY, ((GridLayoutManager)mRecyclerView.getLayoutManager()).findFirstCompletelyVisibleItemPosition());
+            logAndAppend("ON_SAVE_INSTANCE_STATE: 1");
         }
-        logAndAppend("ON_SAVE_INSTANCE_STATE: ");
     }
 
     private void logAndAppend(String on_save_instance_state) {
@@ -73,18 +71,11 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
         // Retrieve list state and list/item positions
         if(savedInstanceState != null){
-            mSavedState = savedInstanceState.getParcelable(LIFECYCLE_CALLBACK_TEXT_KEY);
-            logAndAppend("ON_RESTORE_INSTANCE_STATE: ");
-        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        if (mSavedState != null) {
-            mRecyclerView.getLayoutManager().onRestoreInstanceState(mSavedState);
-            logAndAppend("ON_RESUME_INSTANCE_STATE: ");
+            Parcelable savedState = savedInstanceState.getParcelable(LIFECYCLE_CALLBACK_TEXT_KEY);
+            int position = savedInstanceState.getInt(SCROLL_POSITION_KEY);
+            ((GridLayoutManager) mRecyclerView.getLayoutManager()).onRestoreInstanceState(savedState);
+            ((GridLayoutManager) mRecyclerView.getLayoutManager()).scrollToPosition(position);
+            logAndAppend("ON_RESTORE_INSTANCE_STATE: 2");
         }
     }
 
@@ -122,11 +113,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             layoutManager = new GridLayoutManager(this,3);
         }
         mRecyclerView.setLayoutManager(layoutManager);
-
-        if (mSavedState != null) {
-            mRecyclerView.getLayoutManager().onRestoreInstanceState(mSavedState);
-            logAndAppend("ON_RESUME_INSTANCE_STATE: ");
-        }
 
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setHasFixedSize(true);
@@ -185,7 +171,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
                 }else {
                     int statusCode  = response.code();
-                    mErrorMessage.setText("Check your settings and Internet connection and try again. \n"+"Error: "+ statusCode);
 
                     // handle request errors depending on status code
                     (Toast.makeText(mContext, "Check your connection and try again!", Toast.LENGTH_SHORT)).show();
@@ -194,7 +179,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
             @Override
             public void onFailure(Call<MovieResponses> call, Throwable t) {
-                mErrorMessage.setText("Check your settings and Internet connection and try again.");
 
                 // handle request errors depending on status code
                 (Toast.makeText(mContext, "Check your connection and try again!", Toast.LENGTH_SHORT)).show();

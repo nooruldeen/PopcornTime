@@ -87,7 +87,6 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
                     if (position != RecyclerView.NO_POSITION){
                         Movie clickedDataItem = mList.get(position);
                         Intent intent = new Intent(mContext, DetailsActivity.class);
-//                        intent.putExtra(MOVIE_INTENT_KEY, clickedDataItem );
                         intent.putExtra(TITLE_INTENT_KEY, clickedDataItem.getTitle());
                         intent.putExtra(POSTER_INTENT_KEY, clickedDataItem.getPosterPath());
                         intent.putExtra(RELEASE_DATE_INTENT_KEY, clickedDataItem.getReleaseDate());
@@ -103,6 +102,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
         }
     }
 
+
     public interface PostMoviesListener{
         void onPostClick(long id);
     }
@@ -110,4 +110,6 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
     public void ClearList(){
         mList.clear();
     }
+
+
 }
