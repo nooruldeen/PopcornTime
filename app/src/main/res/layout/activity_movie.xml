@@ -9,14 +9,13 @@
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="350dp"
+        android:layout_height="wrap_content"
         android:fitsSystemWindows="true">
 
         <android.support.design.widget.CollapsingToolbarLayout
             android:id="@+id/tb_collapsing"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:elevation="8dp"
             android:fitsSystemWindows="true"
             app:collapsedTitleGravity="center_horizontal"
             app:expandedTitleGravity="center_horizontal|bottom"
@@ -25,6 +24,7 @@
             <ImageView
                 android:id="@+id/iv_movie_poster"
                 android:layout_width="match_parent"
+                android:contentDescription="@string/movie_poster_description"
                 android:layout_height="wrap_content"
                 android:adjustViewBounds="true"
                 android:fitsSystemWindows="true"
@@ -117,7 +117,7 @@
                             android:layout_height="80dp"
                             android:layout_gravity="center"
                             android:gravity="center"
-                            android:textSize="20dp"
+                            android:textSize="20sp"
                             android:textStyle="bold"
                             tools:text="8.1" />
                     </FrameLayout>
@@ -132,7 +132,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:textSize="16dp"
+                            android:textSize="16sp"
                             android:textAlignment="center"
                             android:textStyle="bold"
                             tools:text="MAY 01 2018" />

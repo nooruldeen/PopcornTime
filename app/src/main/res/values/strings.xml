@@ -26,4 +26,5 @@
     <string name="title_notifications">Notifications</string>
     <string name="no_content">No content to display</string>
     <string name="rating_label">Rating</string>
+    <string name="movie_poster_description">Movie Poster</string>
 </resources>

@@ -62,8 +62,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
         if (mRecyclerView != null) {
             // Save layout state
-            outState.putParcelable(LIFECYCLE_CALLBACK_TEXT_KEY, mRecyclerView.getLayoutManager().onSaveInstanceState());
-            outState.putInt(SCROLL_POSITION_KEY, ((GridLayoutManager)mRecyclerView.getLayoutManager()).findFirstCompletelyVisibleItemPosition());
+            outState.putInt(SCROLL_POSITION_KEY, ((GridLayoutManager)mRecyclerView.getLayoutManager()).findFirstVisibleItemPosition());
             outState.putInt(CURRENT_PAGE_KEY, scrollListener.getCurrentPage());
             outState.putInt(PREVIOUS_TOTAL_ITEM_COUNT_KEY, scrollListener.getPreviousTotalItemCount());
             outState.putBoolean(LOADING_KEY, scrollListener.isLoading());
@@ -75,17 +74,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     private void logAndAppend(String on_save_instance_state) {
         Log.d(TAG,"Lifecycle log: "+on_save_instance_state);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-
-        // Retrieve list state and list/item positions
-        if(savedInstanceState != null){
-            Parcelable savedState = savedInstanceState.getParcelable(LIFECYCLE_CALLBACK_TEXT_KEY);
-            logAndAppend("ON_RESTORE_INSTANCE_STATE: 2");
-        }
     }
 
     @Override
@@ -119,9 +107,9 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
 
         if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
-            layoutManager = new GridLayoutManager(this,5);
-        } else {
             layoutManager = new GridLayoutManager(this,3);
+        } else {
+            layoutManager = new GridLayoutManager(this,2);
         }
         mRecyclerView.setLayoutManager(layoutManager);
 
@@ -139,9 +127,9 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 // Scroll to position
                 ((GridLayoutManager) mRecyclerView.getLayoutManager()).scrollToPosition(savedInstanceState.getInt(SCROLL_POSITION_KEY));
             }
+        } else {
+            loadMovies(API_DEFAULT_PAGE, mSortType);
         }
-
-        loadMovies(API_DEFAULT_PAGE, mSortType);
 
         //        Log.d(TAG, "onCreate: registering preference changed listener");
         scrollListener = new EndlessRecyclerViewScrollListener((GridLayoutManager) layoutManager) {

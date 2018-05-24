@@ -19,5 +19,5 @@
     <dimen name="layout_padding">16dp</dimen>
     <dimen name="card_image_height">150dp</dimen>
     <dimen name="title_font_size">12sp</dimen>
-    <dimen name="card_font_size">8sp</dimen>
+    <dimen name="card_font_size">12sp</dimen>
 </resources>
