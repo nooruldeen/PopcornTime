@@ -10,10 +10,9 @@ Developed by Nooruldeen Alsaif
 * Endless scrolling using Grid Layout and Retrofit 2
 * Menu option buttons to switch between popular and top rated movies
 
+<img src="https://github.com/nooruldeen/PopcornTime/blob/master/giphy.gif" alt="stock main page" width="270" height="480">
 
 ### Attribution 
 [Retrofit2 tutorial](https://code.tutsplus.com/tutorials/getting-started-with-retrofit-2--cms-27792)
 
-[](https://)
-
-[](https://)
+[Endless Scrolling](https://github.com/codepath/android_guides/wiki/Endless-Scrolling-with-AdapterViews-and-RecyclerView)
