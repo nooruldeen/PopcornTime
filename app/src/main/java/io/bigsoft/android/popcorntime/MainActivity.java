@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Parcelable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import io.bigsoft.android.popcorntime.adapter.MoviesAdapter;
 import io.bigsoft.android.popcorntime.api.ApiUtilities;
@@ -38,7 +40,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     private RecyclerView mRecyclerView;
     private Toolbar mToolbar;
     private Context mContext;
-    private Parcelable mSavedState;
+    private boolean mLoadSavedState;
     private EndlessRecyclerViewScrollListener scrollListener;
     private String mSortType;
 
@@ -47,6 +49,11 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     private static final int API_DEFAULT_PAGE =1;
     private static final String POPULAR_SORT_TYPE = "popular";
     private static final String TOP_RATED_SORT_TYPE = "top_rated";
+    private static final String PREVIOUS_TOTAL_ITEM_COUNT_KEY = "previous_total_item_count";
+    private static final String LOADING_KEY = "loading";
+    private static final String CURRENT_PAGE_KEY = "current_page";
+    private static final String SORT_TYPE_KEY = "sort_type";
+    private static final String MOVIES_LIST_KEY = "movies_list";
 
 
     @Override
@@ -54,9 +61,14 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         super.onSaveInstanceState(outState);
 
         if (mRecyclerView != null) {
-            // Save list state
+            // Save layout state
             outState.putParcelable(LIFECYCLE_CALLBACK_TEXT_KEY, mRecyclerView.getLayoutManager().onSaveInstanceState());
             outState.putInt(SCROLL_POSITION_KEY, ((GridLayoutManager)mRecyclerView.getLayoutManager()).findFirstCompletelyVisibleItemPosition());
+            outState.putInt(CURRENT_PAGE_KEY, scrollListener.getCurrentPage());
+            outState.putInt(PREVIOUS_TOTAL_ITEM_COUNT_KEY, scrollListener.getPreviousTotalItemCount());
+            outState.putBoolean(LOADING_KEY, scrollListener.isLoading());
+            outState.putString(SORT_TYPE_KEY, mSortType);
+            outState.putParcelableArrayList(MOVIES_LIST_KEY, (ArrayList<? extends Parcelable>) mAdapter.getmList());
             logAndAppend("ON_SAVE_INSTANCE_STATE: 1");
         }
     }
@@ -72,9 +84,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         // Retrieve list state and list/item positions
         if(savedInstanceState != null){
             Parcelable savedState = savedInstanceState.getParcelable(LIFECYCLE_CALLBACK_TEXT_KEY);
-            int position = savedInstanceState.getInt(SCROLL_POSITION_KEY);
-            ((GridLayoutManager) mRecyclerView.getLayoutManager()).onRestoreInstanceState(savedState);
-            ((GridLayoutManager) mRecyclerView.getLayoutManager()).scrollToPosition(position);
             logAndAppend("ON_RESTORE_INSTANCE_STATE: 2");
         }
     }
@@ -92,6 +101,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 //        RecyclerView mRecyclerView;
 
         mContext = this;
+        mLoadSavedState = false;
         mService = ApiUtilities.getTMDBService();
         mRecyclerView = (RecyclerView) findViewById(R.id.rv_contents);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -105,8 +115,9 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 Toast.makeText(MainActivity.this, "Post id is" + id, Toast.LENGTH_SHORT).show();
             }
         });
-
         RecyclerView.LayoutManager layoutManager = null;
+
+
         if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
             layoutManager = new GridLayoutManager(this,5);
         } else {
@@ -116,10 +127,23 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setHasFixedSize(true);
+        if (savedInstanceState != null ) {
+            if (savedInstanceState.containsKey(MOVIES_LIST_KEY)) {
+
+                mSortType = savedInstanceState.getString(SORT_TYPE_KEY);
+
+                ArrayList<Movie> list;
+                list = savedInstanceState.getParcelableArrayList(MOVIES_LIST_KEY);
+                mAdapter.setmList(list);
+                mAdapter.notifyDataSetChanged();
+            }
+        }
+
         loadMovies(API_DEFAULT_PAGE, mSortType);
 
         //        Log.d(TAG, "onCreate: registering preference changed listener");
         scrollListener = new EndlessRecyclerViewScrollListener((GridLayoutManager) layoutManager) {
+
             @Override
             public void onLoadMore(int page, final int totalItemsCount, final RecyclerView view) {
                 // Triggered only when new data needs to be appended to the list
@@ -139,6 +163,15 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
             }
         };
+
+        if (savedInstanceState!=null) {
+            if (savedInstanceState.containsKey(CURRENT_PAGE_KEY)) {
+                scrollListener.setCurrentPage(savedInstanceState.getInt(CURRENT_PAGE_KEY));
+                scrollListener.setLoading(savedInstanceState.getBoolean(LOADING_KEY));
+                scrollListener.setPreviousTotalItemCount(savedInstanceState.getInt(PREVIOUS_TOTAL_ITEM_COUNT_KEY));
+                savedInstanceState.clear();
+            }
+        }
 
         // Adds the scroll listener to RecyclerView
         mRecyclerView.addOnScrollListener(scrollListener);

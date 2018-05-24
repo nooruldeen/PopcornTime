@@ -33,6 +33,13 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
     public final static String VOTE_INTENT_KEY = "vote_average";
     public final static String POPULARITY_INTENT_KEY = "popularity";
 
+    public static List<Movie> getmList() {
+        return mList;
+    }
+
+    public void setmList(List<Movie> mList) {
+        MoviesAdapter.mList = mList;
+    }
 
     public MoviesAdapter(Context context, List<Movie> moviesList, PostMoviesListener moviesLisener) {
         this.mContext = context;

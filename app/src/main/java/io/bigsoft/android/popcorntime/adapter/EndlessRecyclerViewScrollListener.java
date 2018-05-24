@@ -9,7 +9,6 @@ import io.bigsoft.android.popcorntime.MainActivity;
 
 public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnScrollListener {
 
-
     // The minimum amount of items to have below your current scroll position
     // before loading more.
     private int visibleThreshold = 5;
@@ -106,4 +105,46 @@ public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnS
 
     // Defines the process for actually loading more data based on page
     public abstract void onLoadMore(int page, int totalItemsCount, RecyclerView view);
+
+
+    public int getVisibleThreshold() {
+        return visibleThreshold;
+    }
+
+    public int getCurrentPage() {
+        return currentPage;
+    }
+
+    public int getPreviousTotalItemCount() {
+        return previousTotalItemCount;
+    }
+
+    public boolean isLoading() {
+        return loading;
+    }
+
+    public int getStartingPageIndex() {
+        return startingPageIndex;
+    }
+
+    public void setVisibleThreshold(int visibleThreshold) {
+        this.visibleThreshold = visibleThreshold;
+    }
+
+    public void setCurrentPage(int currentPage) {
+        this.currentPage = currentPage;
+    }
+
+    public void setPreviousTotalItemCount(int previousTotalItemCount) {
+        this.previousTotalItemCount = previousTotalItemCount;
+    }
+
+    public void setLoading(boolean loading) {
+        this.loading = loading;
+    }
+
+    public void setStartingPageIndex(int startingPageIndex) {
+        this.startingPageIndex = startingPageIndex;
+    }
+
 }
