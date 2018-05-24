@@ -10,8 +10,8 @@
 		- [x] Values
 		- [x] Styles
 - [x] Activities
-	- [ ] Main Acitvity
-		- [ ] Save state on rotation
+	- [x] Main Acitvity
+		- [x] Save state on rotation
 		- [X] Sort type buttons
 		- [x] CardView
 		- [x] GridViewLayout

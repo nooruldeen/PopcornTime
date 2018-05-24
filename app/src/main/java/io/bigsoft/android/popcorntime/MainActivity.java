@@ -136,6 +136,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 list = savedInstanceState.getParcelableArrayList(MOVIES_LIST_KEY);
                 mAdapter.setmList(list);
                 mAdapter.notifyDataSetChanged();
+                // Scroll to position
+                ((GridLayoutManager) mRecyclerView.getLayoutManager()).scrollToPosition(savedInstanceState.getInt(SCROLL_POSITION_KEY));
             }
         }
 
