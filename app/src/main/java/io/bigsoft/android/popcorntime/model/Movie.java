@@ -1,5 +1,7 @@
 package io.bigsoft.android.popcorntime.model;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -7,8 +9,7 @@ import android.os.Parcelable.Creator;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Movie implements Parcelable
-{
+public class Movie implements Parcelable, Serializable {
 
     @SerializedName("vote_count")
     @Expose
@@ -39,7 +40,7 @@ public class Movie implements Parcelable
     private String originalTitle;
     @SerializedName("genre_ids")
     @Expose
-    private List<Integer> genreIds = null;
+    private List<Integer> genreIds = new ArrayList<>();
     @SerializedName("backdrop_path")
     @Expose
     private String backdropPath;

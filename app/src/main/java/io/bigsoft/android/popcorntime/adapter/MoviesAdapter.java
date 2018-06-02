@@ -2,6 +2,7 @@ package io.bigsoft.android.popcorntime.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,6 +14,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
+import java.io.Serializable;
 import java.util.List;
 
 import butterknife.BindView;
@@ -23,16 +25,11 @@ import io.bigsoft.android.popcorntime.model.Movie;
 
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesViewHolder> {
 
-
     private Context mContext;
     private static List<Movie> mList;
 
-    public final static String POSTER_INTENT_KEY = "poster";
-    public final static String OVERVIEW_INTENT_KEY = "overview";
-    public final static String TITLE_INTENT_KEY = "title";
-    public final static String RELEASE_DATE_INTENT_KEY = "release_date";
-    public final static String VOTE_INTENT_KEY = "vote_average";
-    public final static String POPULARITY_INTENT_KEY = "popularity";
+    public static final String BUNDLE_KEY = "clicked_movie";
+    public static final String INTENT_BUNDLE_KEY = "movie_bundle";
 
     public static List<Movie> getmList() {
         return mList;
@@ -96,13 +93,10 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
                     int position = getAdapterPosition();
                     if (position != RecyclerView.NO_POSITION){
                         Movie clickedDataItem = mList.get(position);
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable(BUNDLE_KEY, clickedDataItem);
                         Intent intent = new Intent(mContext, DetailsActivity.class);
-                        intent.putExtra(TITLE_INTENT_KEY, clickedDataItem.getTitle());
-                        intent.putExtra(POSTER_INTENT_KEY, clickedDataItem.getPosterPath());
-                        intent.putExtra(RELEASE_DATE_INTENT_KEY, clickedDataItem.getReleaseDate());
-                        intent.putExtra(OVERVIEW_INTENT_KEY, clickedDataItem.getOverview());
-                        intent.putExtra(POPULARITY_INTENT_KEY, clickedDataItem.getPopularity());
-                        intent.putExtra(VOTE_INTENT_KEY, clickedDataItem.getVoteAverage());
+                        intent.putExtra(INTENT_BUNDLE_KEY, bundle);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         mContext.startActivity(intent);
                         Toast.makeText(v.getContext(), "You clicked " + clickedDataItem.getOriginalTitle(), Toast.LENGTH_SHORT).show();

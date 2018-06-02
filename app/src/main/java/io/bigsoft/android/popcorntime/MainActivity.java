@@ -28,7 +28,6 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity{
 
-    private TMDBService mService;
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
@@ -40,6 +39,7 @@ public class MainActivity extends AppCompatActivity{
 
     private String mSortType;
     private MoviesAdapter mAdapter;
+    private TMDBService mService;
 
     private static final int API_DEFAULT_PAGE =1;
     private static final String SCROLL_POSITION_KEY = "position";
@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity{
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        mService = ApiUtilities.getTMDBService();
+        mService = PopcornTime.get(this).getTMDBService();
         mSortType = POPULAR_SORT_TYPE;
 
         setSupportActionBar(mToolbar);
