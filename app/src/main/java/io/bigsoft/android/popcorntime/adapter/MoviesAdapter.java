@@ -15,6 +15,8 @@ import com.bumptech.glide.Glide;
 
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import io.bigsoft.android.popcorntime.DetailsActivity;
 import io.bigsoft.android.popcorntime.R;
 import io.bigsoft.android.popcorntime.model.Movie;
@@ -24,7 +26,6 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
 
     private Context mContext;
     private static List<Movie> mList;
-    private PostMoviesListener mMoviesListener;
 
     public final static String POSTER_INTENT_KEY = "poster";
     public final static String OVERVIEW_INTENT_KEY = "overview";
@@ -41,10 +42,9 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
         MoviesAdapter.mList = mList;
     }
 
-    public MoviesAdapter(Context context, List<Movie> moviesList, PostMoviesListener moviesLisener) {
+    public MoviesAdapter(Context context, List<Movie> moviesList, PostMoviesListener postMoviesListener) {
         this.mContext = context;
         this.mList = moviesList;
-        this.mMoviesListener = moviesLisener;
     }
 
     @NonNull
@@ -79,13 +79,16 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
 
 
     public class MoviesViewHolder extends RecyclerView.ViewHolder {
-        public TextView title;
-        public ImageView movieCardImage;
+
+        @BindView(R.id.movie_title)
+        TextView title;
+        @BindView(R.id.thumbnail)
+        ImageView movieCardImage;
+
         public MoviesViewHolder(View itemView) {
 
             super(itemView);
-            title = (TextView) itemView.findViewById(R.id.title);
-            movieCardImage = (ImageView) itemView.findViewById(R.id.thumbnail);
+            ButterKnife.bind(this,itemView);
 
             itemView.setOnClickListener(new View.OnClickListener(){
                 @Override

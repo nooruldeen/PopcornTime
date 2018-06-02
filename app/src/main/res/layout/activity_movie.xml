@@ -9,8 +9,9 @@
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fitsSystemWindows="true">
+        android:layout_height="450dp"
+        android:fitsSystemWindows="true"
+        android:theme="@style/ThemeOverlay.AppCompat.Light">
 
         <android.support.design.widget.CollapsingToolbarLayout
             android:id="@+id/tb_collapsing"
@@ -19,16 +20,20 @@
             android:fitsSystemWindows="true"
             app:collapsedTitleGravity="center_horizontal"
             app:expandedTitleGravity="center_horizontal|bottom"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
+            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
+            android:theme="@style/ThemeOverlay.AppCompat.Light"
+            android:background="@color/colorWhite">
 
             <ImageView
                 android:id="@+id/iv_movie_poster"
                 android:layout_width="match_parent"
                 android:contentDescription="@string/movie_poster_description"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:adjustViewBounds="true"
                 android:fitsSystemWindows="true"
-                android:scaleType="centerCrop"
+                android:paddingTop="?attr/actionBarSize"
+                android:paddingBottom="@dimen/layout_padding"
+                android:scaleType="fitCenter"
                 app:layout_collapseMode="parallax" />
 
             <android.support.v7.widget.Toolbar
@@ -39,6 +44,7 @@
                 android:layout_centerHorizontal="true"
                 android:background="?attr/colorPrimary"
                 android:minHeight="?attr/actionBarSize"
+                app:layout_collapseMode="none"
                 app:theme="@style/ThemeOverlay.AppCompat.Dark">
             </android.support.v7.widget.Toolbar>
 

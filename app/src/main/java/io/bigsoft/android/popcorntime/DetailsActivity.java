@@ -4,25 +4,38 @@ import android.content.Intent;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import io.bigsoft.android.popcorntime.adapter.MoviesAdapter;
 import io.bigsoft.android.popcorntime.model.Movie;
 
 public class DetailsActivity extends AppCompatActivity {
 
-    private ImageView mPoster;
-    private TextView mTitle;
-    private TextView mReleaseDate;
-    private Toolbar mToolbar;
-    private TextView mPopularity;
-    private TextView mRatingNumber;
-    private TextView mOverview;
-    private CollapsingToolbarLayout mCollapsingToolbarLayout;
+    @BindView(R.id.iv_movie_poster)
+    ImageView mPoster;
+    @BindView(R.id.tv_title)
+    TextView mTitle;
+    @BindView(R.id.tv_release_date)
+    TextView mReleaseDate;
+    @BindView(R.id.tb_details_activity)
+    Toolbar mToolbar;
+    @BindView(R.id.tv_rating)
+    TextView mRatingNumber;
+    @BindView(R.id.tv_overview)
+    TextView mOverview;
+    @BindView(R.id.tb_collapsing)
+    CollapsingToolbarLayout mCollapsingToolbarLayout;
+    @BindView(R.id.rv_trailer_details)
+    RecyclerView mTrailers;
+    @BindView(R.id.rv_reviews_details)
+    RecyclerView mReviews;
 
     private Movie movie;
 
@@ -31,14 +44,8 @@ public class DetailsActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie);
+        ButterKnife.bind(this);
 
-        mToolbar = (Toolbar) findViewById(R.id.tb_details_activity);
-        mTitle = (TextView) findViewById(R.id.tv_title);
-        mPoster = (ImageView) findViewById(R.id.iv_movie_poster);
-        mReleaseDate = (TextView) findViewById(R.id.tv_release_date);
-        mRatingNumber = (TextView) findViewById(R.id.tv_rating);
-        mOverview = (TextView) findViewById(R.id.tv_overview);
-        mCollapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.tb_collapsing);
         mCollapsingToolbarLayout.setTitleEnabled(false);
 
         String posterImageUrl;
