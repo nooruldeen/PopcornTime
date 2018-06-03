@@ -60,7 +60,7 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ReviewsV
         }
     }
 
-    public void updateMovies(List<Review> reviews) {
+    public void updateReviews(List<Review> reviews) {
         mList.addAll(reviews);
         notifyDataSetChanged();
     }

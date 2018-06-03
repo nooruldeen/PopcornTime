@@ -92,7 +92,7 @@ public class DetailsActivity extends AppCompatActivity {
                 mReleaseDate.setText(movie.getReleaseDate());
                 mRatingNumber.setText(Double.toString(movie.getVoteAverage()));
                 mOverview.setText(movie.getOverview());
-                posterImageUrl = "https://image.tmdb.org/t/p/w500" +movie.getPosterPath();
+                posterImageUrl = "https://image.tmdb.org/t/p/w500" +movie.getBackdropPath();
 
                 Glide.with(this)
                         .load(posterImageUrl)
@@ -115,7 +115,7 @@ public class DetailsActivity extends AppCompatActivity {
         trailersLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         mTrailers.setLayoutManager(trailersLayoutManager);
         mTrailersAdapter = new TrailersAdapter(this, new ArrayList<Trailer>());
-        mTrailers.setAdapter(mReviewsAdapter);
+        mTrailers.setAdapter(mTrailersAdapter);
 
         Call<TrailerResponses> trailerResponsesCall = mService.getVideos(id, apiKey);
 
@@ -123,7 +123,10 @@ public class DetailsActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<TrailerResponses> call, Response<TrailerResponses> response) {
                 if (response.isSuccessful()){
-
+                    mTrailersAdapter.updateTrailers(response.body().getResults());
+                } else {
+                    // handle request errors depending on status code
+                    (Toast.makeText(DetailsActivity.this, "No trailer was found!", Toast.LENGTH_SHORT)).show();
                 }
             }
 
@@ -148,10 +151,8 @@ public class DetailsActivity extends AppCompatActivity {
                 Log.d("Retrofit2", "Retrofit response URL: "+call.request().url());
 
                 if (response.isSuccessful()){
-                    mReviewsAdapter.updateMovies(response.body().getResults());
+                    mReviewsAdapter.updateReviews(response.body().getResults());
                 }else {
-                    int statusCode  = response.code();
-
                     // handle request errors depending on status code
                     (Toast.makeText(DetailsActivity.this, "No reviews were found!", Toast.LENGTH_SHORT)).show();
                 }

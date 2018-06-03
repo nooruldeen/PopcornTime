@@ -15,7 +15,7 @@ public interface TMDBService {
     @GET("movie/top_rated")
     Call<MovieResponses> getTopRatedMovies(@Query("api_key") String apiKey, @Query("page") int page);
 
-    @GET("movie/{id}/reviews")
+    @GET("movie/{id}/videos")
     Call<TrailerResponses> getVideos(@Path("id") int id, @Query("api_key") String apiKey);
 
     @GET("movie/{id}/reviews")

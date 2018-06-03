@@ -9,7 +9,7 @@
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="450dp"
+        android:layout_height="wrap_content"
         android:fitsSystemWindows="true"
         android:theme="@style/ThemeOverlay.AppCompat.Light">
 
@@ -28,8 +28,7 @@
             <ImageView
                 android:id="@+id/iv_movie_poster"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_margin="@dimen/card_margin"
+                android:layout_height="wrap_content"
                 android:adjustViewBounds="true"
                 android:contentDescription="@string/movie_poster_description"
                 android:fitsSystemWindows="true"
@@ -162,44 +161,24 @@
                     android:padding="16dp"
                     tools:text="Summary \n For  \n Random \n Movie " />
 
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
 
-                <android.support.v7.widget.CardView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="8dp"
-                    app:cardCornerRadius="8dp">
-
-                    <LinearLayout
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/rv_trailer_details"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical">
+                        android:background="@android:color/white" />
 
-
-                        <TextView
-                            android:id="@+id/tv_trailer_title"
-                            style="@style/AppTheme.Subtitles"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:paddingStart="8dp"
-                            android:text="videos" />
-
-                        <android.support.v7.widget.RecyclerView
-                            android:id="@+id/rv_trailer_details"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:background="@android:color/white"
-                            android:nestedScrollingEnabled="false" />
-                    </LinearLayout>
-                </android.support.v7.widget.CardView>
+                </LinearLayout>
 
                 <TextView
                     android:id="@+id/tv_review_title"
                     style="@style/AppTheme.Subtitles"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="reviews" />
+                    android:layout_marginTop="4dp" />
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/rv_reviews_details"
