@@ -6,6 +6,7 @@ import com.google.gson.annotations.SerializedName;
 public class Trailer {
 
     private static final String YOUTUBE_THUMBNAIL_URL = "http://img.youtube.com/vi/%s/hqdefault.jpg";
+    private static final String YOUTUBE_PLAYER_URI ="https://www.youtube.com/watch?v=%s";
 
     @SerializedName("id")
     @Expose
@@ -34,6 +35,10 @@ public class Trailer {
 
     public String getYoutubeThumbnailUri() {
         return String.format(YOUTUBE_THUMBNAIL_URL, key);
+    }
+
+    public String getYoutubePlayerUri() {
+        return String.format(YOUTUBE_PLAYER_URI, key);
     }
 
     public String getId() {
