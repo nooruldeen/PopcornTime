@@ -14,6 +14,7 @@
 		- [x] Save state on rotation
 		- [X] Sort type buttons
 		- [ ] Sort by favorites
+			- [ ] Read from database
 		- [x] CardView
 		- [x] GridViewLayout
 		- [x] Endless scrolling
@@ -21,9 +22,12 @@
 	- [x] Details Acitivty
 		- [x] Back button
 		- [x] Display Poster, title, average vote, release date, plot synopsis (Overview)
-		- [ ] Trailer videos section
-		- [ ] User reviews section
+		- [x] Trailer videos section
+		- [x] User reviews section
 		- [ ] Favorite button
+			- [ ] Create database
+			- [ ] Add movie
+			- [ ] Remove movie
 - [x] Network Utilities
 - [x] Adapter
 - [x] API
