@@ -4,7 +4,7 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="nav_header_vertical_spacing">8dp</dimen>
     <dimen name="nav_header_height">176dp</dimen>
-    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="fab_margin">12dp</dimen>
     <!-- TODO (3) Define Dimensions for layout components -->
     <dimen name="title">16dp</dimen>
     <dimen name="title_padding">10dp</dimen>
@@ -20,4 +20,6 @@
     <dimen name="card_image_height">150dp</dimen>
     <dimen name="title_font_size">12sp</dimen>
     <dimen name="card_font_size">12sp</dimen>
+    <dimen name="appbar_height">256dp</dimen>
+    <dimen name="activity_margin_content">24dp</dimen>
 </resources>
