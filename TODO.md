@@ -13,9 +13,9 @@
 	- [x] Main Acitvity
 		- [x] Save state on rotation
 		- [X] Sort type buttons
-		- [ ] Sort by favorites
+		- [x] Sort by favorites
 			- [x] Add favorite button to the action bar menue buttons
-			- [ ] Read from database
+			- [x] Read from database
 		- [x] CardView
 		- [x] GridViewLayout
 		- [x] Endless scrolling
@@ -35,6 +35,6 @@
 - [x] API
 - [x] Model
 	- [x] Retrofit 2
-	- [ ] Store the titles and IDs of the user's favorite movies in a native SQLite database
+	- [x] Store the titles and IDs of the user's favorite movies in a native SQLite database
 
 ### Submit project
