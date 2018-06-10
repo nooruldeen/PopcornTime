@@ -14,7 +14,7 @@
 		- [x] Save state on rotation
 		- [X] Sort type buttons
 		- [ ] Sort by favorites
-			- [ ] Add favorite button to the action bar menue buttons
+			- [x] Add favorite button to the action bar menue buttons
 			- [ ] Read from database
 		- [x] CardView
 		- [x] GridViewLayout
@@ -25,11 +25,11 @@
 		- [x] Display Poster, title, average vote, release date, plot synopsis (Overview)
 		- [x] Trailer videos section
 		- [x] User reviews section
-		- [ ] Favorite button
+		- [x] Favorite button
 			- [x] Create FAB
 			- [x] Create database
-			- [ ] Add movie
-			- [ ] Remove movie
+			- [x] Add movie
+			- [x] Remove movie
 - [x] Network Utilities
 - [x] Adapter
 - [x] API

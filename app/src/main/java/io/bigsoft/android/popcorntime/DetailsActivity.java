@@ -1,13 +1,18 @@
 package io.bigsoft.android.popcorntime;
 
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,6 +28,7 @@ import io.bigsoft.android.popcorntime.adapter.MoviesAdapter;
 import io.bigsoft.android.popcorntime.adapter.ReviewsAdapter;
 import io.bigsoft.android.popcorntime.adapter.TrailersAdapter;
 import io.bigsoft.android.popcorntime.api.TMDBService;
+import io.bigsoft.android.popcorntime.data.DbUtils;
 import io.bigsoft.android.popcorntime.model.Movie;
 import io.bigsoft.android.popcorntime.model.Review;
 import io.bigsoft.android.popcorntime.model.ReviewResponses;
@@ -53,10 +59,14 @@ public class DetailsActivity extends AppCompatActivity {
     RecyclerView mTrailers;
     @BindView(R.id.rv_reviews_details)
     RecyclerView mReviews;
+    @BindView(R.id.fab_favorite)
+    FloatingActionButton mFab;
 
     private TrailersAdapter mTrailersAdapter;
     private ReviewsAdapter mReviewsAdapter;
     private TMDBService mService;
+    private SQLiteDatabase mWritableDb;
+    private boolean mFavorite;
 
     private LinearLayoutManager trailersLayoutManager;
     private LinearLayoutManager reviewsLayoutManager;
@@ -67,7 +77,6 @@ public class DetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie);
         ButterKnife.bind(this);
-
 
     }
 
@@ -80,18 +89,35 @@ public class DetailsActivity extends AppCompatActivity {
     private void populateMovie(){
 
         String posterImageUrl;
+        mFavorite = false;
 
         Intent intent = getIntent();
 
         if (intent != null){
             if (intent.hasExtra(MoviesAdapter.INTENT_BUNDLE_KEY)){
                 Bundle bundle = intent.getBundleExtra(MoviesAdapter.INTENT_BUNDLE_KEY);
-                Movie movie = (Movie) bundle.getSerializable(MoviesAdapter.BUNDLE_KEY);
+                final Movie movie = (Movie) bundle.getSerializable(MoviesAdapter.BUNDLE_KEY);
 
                 mTitle.setText(movie.getTitle());
                 mReleaseDate.setText(movie.getReleaseDate());
                 mRatingNumber.setText(Double.toString(movie.getVoteAverage()));
                 mOverview.setText(movie.getOverview());
+                mWritableDb = PopcornTime.get(this).getWritableFavorites();
+
+                setFabImage(movie.getId());
+
+                mFab.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (DbUtils.isFavorite(movie.getId(), mWritableDb)){
+                            DbUtils.removeFavorite(movie.getId(), mWritableDb);
+                        } else {
+                            DbUtils.addFavorite(movie, mWritableDb);
+                        }
+                        setFabImage(movie.getId());
+                    }
+                });
+
                 posterImageUrl = "https://image.tmdb.org/t/p/w500" +movie.getBackdropPath();
 
                 Glide.with(this)
@@ -170,5 +196,13 @@ public class DetailsActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return true;
+    }
+
+    public void setFabImage(int id){
+        if (DbUtils.isFavorite(id, mWritableDb)){
+            mFab.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_favorite));
+        } else {
+            mFab.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_favorite_border));
+        }
     }
 }

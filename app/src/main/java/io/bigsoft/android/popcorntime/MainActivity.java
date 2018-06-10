@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity{
     private static final String SCROLL_POSITION_KEY = "position";
     private static final String POPULAR_SORT_TYPE = "popular";
     private static final String TOP_RATED_SORT_TYPE = "top_rated";
+    private static final String FAVORITES_TYPE = "favorites";
     private static final String PREVIOUS_TOTAL_ITEM_COUNT_KEY = "previous_total_item_count";
     private static final String LOADING_KEY = "loading";
     private static final String CURRENT_PAGE_KEY = "current_page";
@@ -138,6 +139,9 @@ public class MainActivity extends AppCompatActivity{
                 movieResponsesCall = mService.getTopRatedMovies(BuildConfig.THEMOVIEDB_API_KEY, offset);
                 break;
             }
+            case FAVORITES_TYPE:{
+                break;
+            }
 
         }
         movieResponsesCall.enqueue(new Callback<MovieResponses>() {
@@ -201,6 +205,15 @@ public class MainActivity extends AppCompatActivity{
             case R.id.top_rated_action:
                 if (mSortType!=TOP_RATED_SORT_TYPE){
                     mSortType=TOP_RATED_SORT_TYPE;
+                    mAdapter.ClearList();
+                    mAdapter.notifyDataSetChanged();
+                    scrollListener.resetState();
+                    loadMovies(API_DEFAULT_PAGE, mSortType);
+                }
+                break;
+            case R.id.favorites_action:
+                if (mSortType!=FAVORITES_TYPE){
+                    mSortType=FAVORITES_TYPE;
                     mAdapter.ClearList();
                     mAdapter.notifyDataSetChanged();
                     scrollListener.resetState();

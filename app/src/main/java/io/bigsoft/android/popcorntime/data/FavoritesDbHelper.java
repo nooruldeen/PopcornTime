@@ -13,8 +13,8 @@ public class FavoritesDbHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
 
     // Constructor
-    public FavoritesDbHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
-        super(context, name, factory, version);
+    public FavoritesDbHelper(Context context) {
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     @Override

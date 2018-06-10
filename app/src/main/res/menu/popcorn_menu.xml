@@ -13,4 +13,10 @@
         app:showAsAction="never"
         />
 
+    <item
+        android:id="@+id/favorites_action"
+        android:title="Favorite Movies"
+        app:showAsAction="never"
+        />
+
 </menu>

@@ -187,11 +187,12 @@
     </android.support.v4.widget.NestedScrollView>
 
     <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_favorite"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/fab_margin"
         android:clickable="true"
-        android:src="@drawable/button_favorite"
+        app:srcCompat="@drawable/ic_favorite_border"
         app:backgroundTint="@color/white_50"
         app:fabSize="normal"
         app:layout_anchor="@+id/appbar"
