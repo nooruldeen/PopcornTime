@@ -1,5 +1,6 @@
 package io.bigsoft.android.popcorntime;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -65,8 +66,7 @@ public class DetailsActivity extends AppCompatActivity {
     private TrailersAdapter mTrailersAdapter;
     private ReviewsAdapter mReviewsAdapter;
     private TMDBService mService;
-    private SQLiteDatabase mWritableDb;
-    private boolean mFavorite;
+    private Context mContext;
 
     private LinearLayoutManager trailersLayoutManager;
     private LinearLayoutManager reviewsLayoutManager;
@@ -77,6 +77,7 @@ public class DetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie);
         ButterKnife.bind(this);
+        mContext = this;
 
     }
 
@@ -89,7 +90,6 @@ public class DetailsActivity extends AppCompatActivity {
     private void populateMovie(){
 
         String posterImageUrl;
-        mFavorite = false;
 
         Intent intent = getIntent();
 
@@ -102,17 +102,16 @@ public class DetailsActivity extends AppCompatActivity {
                 mReleaseDate.setText(movie.getReleaseDate());
                 mRatingNumber.setText(Double.toString(movie.getVoteAverage()));
                 mOverview.setText(movie.getOverview());
-                mWritableDb = PopcornTime.get(this).getWritableFavorites();
 
                 setFabImage(movie.getId());
 
                 mFab.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (DbUtils.isFavorite(movie.getId(), mWritableDb)){
-                            DbUtils.removeFavorite(movie.getId(), mWritableDb);
+                        if (DbUtils.isFavorite(movie.getId(), mContext)){
+                            DbUtils.removeFavorite(movie.getId(), mContext);
                         } else {
-                            DbUtils.addFavorite(movie, mWritableDb);
+                            DbUtils.addFavorite(movie, mContext);
                         }
                         setFabImage(movie.getId());
                     }
@@ -199,7 +198,7 @@ public class DetailsActivity extends AppCompatActivity {
     }
 
     public void setFabImage(int id){
-        if (DbUtils.isFavorite(id, mWritableDb)){
+        if (DbUtils.isFavorite(id, mContext)){
             mFab.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_favorite));
         } else {
             mFab.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_favorite_border));

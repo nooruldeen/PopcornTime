@@ -16,8 +16,7 @@ public class PopcornTime extends Application {
     }
 
     private TMDBService mService;
-    private SQLiteOpenHelper mDbHelper;
-    private SQLiteDatabase readableDb;
+    private FavoritesDbHelper mDbHelper;
     private SQLiteDatabase writableDb;
 
     @Override
@@ -26,15 +25,10 @@ public class PopcornTime extends Application {
         mDbHelper = new FavoritesDbHelper(this);
         mService = ApiUtilities.getTMDBService();
         mDbHelper = new FavoritesDbHelper(this);
-        readableDb = mDbHelper.getReadableDatabase();
         writableDb = mDbHelper.getWritableDatabase();
     }
 
     public TMDBService getTMDBService() {  return mService;  }
-
-    public SQLiteDatabase getReadableFavorites() {
-        return readableDb;
-    }
 
     public SQLiteDatabase getWritableFavorites() {
         return writableDb;

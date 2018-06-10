@@ -1,6 +1,7 @@
 package io.bigsoft.android.popcorntime.data;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
@@ -18,29 +19,27 @@ public class DbUtils {
      */
 
 
-    public List<Movie> getAllFavorites(SQLiteDatabase db){
-        String[] columns = {
-                MovieContract.MovieEntry._ID,
-                MovieContract.MovieEntry.COLUMN_ID,
-                MovieContract.MovieEntry.COLUMN_TITLE,
-                MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE,
-                MovieContract.MovieEntry.COLUMN_POSTER_PATH,
-                MovieContract.MovieEntry.COLUMN_BACKDROP_PATH,
-                MovieContract.MovieEntry.COLUMN_RELEASE_DATE,
-                MovieContract.MovieEntry.COLUMN_OVERVIEW,
-                MovieContract.MovieEntry.COLUMN_ADULT
-
-        };
+    public static List<Movie> getFavorites(Context context){
+        FavoritesDbHelper dbHelper = new FavoritesDbHelper(context);
+        SQLiteDatabase database = dbHelper.getReadableDatabase();
         String sortOrder = MovieContract.MovieEntry._ID + " ASC";
         List<Movie> favoriteList = new ArrayList<>();
-        Cursor cursor = getFavorites(db, sortOrder);
+        Cursor cursor = database.query(
+                MovieContract.MovieEntry.TABLE_NAME,
+                null,
+                null,
+                null,
+                null,
+                null,
+                sortOrder
+        );
 
         if (cursor.moveToFirst()){
             do {
                 Movie movie = new Movie();
                 movie.setId(Integer.parseInt(cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_ID))));
                 movie.setTitle(cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_TITLE)));
-                movie.setVoteAverage(Double.parseDouble(cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE))));
+                movie.setVoteAverage(cursor.getDouble(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE)));
                 movie.setPosterPath(cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_POSTER_PATH)));
                 movie.setOverview(cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_OVERVIEW)));
                 movie.setReleaseDate(cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_RELEASE_DATE)));
@@ -49,21 +48,9 @@ public class DbUtils {
             }while(cursor.moveToNext());
         }
         cursor.close();
-        db.close();
+        database.close();
 
         return favoriteList;
-    }
-
-    public static Cursor getFavorites(SQLiteDatabase db, String orderBy) {
-        return db.query(
-                MovieContract.MovieEntry.TABLE_NAME,
-                null,
-                null,
-                null,
-                null,
-                null,
-                orderBy
-        );
     }
 
     /**
@@ -72,12 +59,24 @@ public class DbUtils {
      * @param movie
      * @return id of new record added
      */
-    public static long addFavorite(Movie movie, SQLiteDatabase db) {
+    public static long addFavorite(Movie movie, Context context) {
+        FavoritesDbHelper dbHelper = new FavoritesDbHelper(context);
+        SQLiteDatabase database = dbHelper.getWritableDatabase();
+        long results;
+
         ContentValues cv = new ContentValues();
         cv.put(MovieContract.MovieEntry.COLUMN_ID, movie.getId());
         cv.put(MovieContract.MovieEntry.COLUMN_TITLE, movie.getTitle());
-        cv.put(MovieContract.MovieEntry.COLUMN_POSTER_PATH, movie.getOriginalTitle());
-        return db.insert(MovieContract.MovieEntry.TABLE_NAME, null, cv);
+        cv.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE, movie.getVoteAverage());
+        cv.put(MovieContract.MovieEntry.COLUMN_OVERVIEW, movie.getOverview());
+        cv.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE, movie.getReleaseDate());
+        cv.put(MovieContract.MovieEntry.COLUMN_BACKDROP_PATH, movie.getBackdropPath());
+        cv.put(MovieContract.MovieEntry.COLUMN_POSTER_PATH, movie.getPosterPath());
+
+        results = database.insert(MovieContract.MovieEntry.TABLE_NAME, null, cv);
+        database.close();
+
+        return results;
     }
 
 
@@ -88,8 +87,13 @@ public class DbUtils {
      * @param id the Movie id to be removed
      * @return True: if removed successfully, False: if failed
      */
-    public static boolean removeFavorite(int id, SQLiteDatabase db) {
-        return db.delete(MovieContract.MovieEntry.TABLE_NAME, MovieContract.MovieEntry.COLUMN_ID + "=" + id, null) > 0;
+    public static boolean removeFavorite(int id, Context context) {
+        FavoritesDbHelper dbHelper = new FavoritesDbHelper(context);
+        SQLiteDatabase database = dbHelper.getWritableDatabase();
+        boolean results;
+        results = database.delete(MovieContract.MovieEntry.TABLE_NAME, MovieContract.MovieEntry.COLUMN_ID + "=" + id, null) > 0;
+        database.close();
+        return results;
     }
 
     // isFavorite function to check if movie is a favorite or not that takes id as input and returns boolean
@@ -99,8 +103,11 @@ public class DbUtils {
      * @param id the Movie id to be removed
      * @return True: if removed successfully, False: if failed
      */
-    public static boolean isFavorite(int id, SQLiteDatabase db) {
-        if (db.query(
+    public static boolean isFavorite(int id, Context context) {
+        FavoritesDbHelper dbHelper = new FavoritesDbHelper(context);
+        SQLiteDatabase database = dbHelper.getReadableDatabase();
+        boolean results;
+        if (database.query(
                 MovieContract.MovieEntry.TABLE_NAME,
                 null,
                 MovieContract.MovieEntry.COLUMN_ID+" = "+id,
@@ -109,8 +116,10 @@ public class DbUtils {
                 null,
                 null
         ).getCount()>0){
+            database.close();
             return true;
         }else {
+            database.close();
             return false;
         }
     }

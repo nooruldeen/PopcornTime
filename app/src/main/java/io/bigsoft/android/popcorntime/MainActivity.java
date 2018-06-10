@@ -1,6 +1,11 @@
 package io.bigsoft.android.popcorntime;
 
+import android.content.AsyncTaskLoader;
+import android.content.Context;
 import android.content.res.Configuration;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+import android.os.AsyncTask;
 import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,12 +17,15 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.bigsoft.android.popcorntime.adapter.MoviesAdapter;
 import io.bigsoft.android.popcorntime.api.ApiUtilities;
 import io.bigsoft.android.popcorntime.api.TMDBService;
+import io.bigsoft.android.popcorntime.data.DbUtils;
+import io.bigsoft.android.popcorntime.data.MovieContract;
 import io.bigsoft.android.popcorntime.model.Movie;
 import io.bigsoft.android.popcorntime.model.MovieResponses;
 import io.bigsoft.android.popcorntime.adapter.EndlessRecyclerViewScrollListener;
@@ -38,6 +46,7 @@ public class MainActivity extends AppCompatActivity{
     private RecyclerView.LayoutManager layoutManager;
 
     private String mSortType;
+    private Context mContext;
     private MoviesAdapter mAdapter;
     private TMDBService mService;
 
@@ -61,6 +70,7 @@ public class MainActivity extends AppCompatActivity{
 
         mService = PopcornTime.get(this).getTMDBService();
         mSortType = POPULAR_SORT_TYPE;
+        mContext = this;
 
         setSupportActionBar(mToolbar);
         mAdapter = new MoviesAdapter(this, new ArrayList<Movie>(0), new MoviesAdapter.PostMoviesListener() {
@@ -75,6 +85,19 @@ public class MainActivity extends AppCompatActivity{
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setHasFixedSize(true);
+        scrollListener = new EndlessRecyclerViewScrollListener((GridLayoutManager) layoutManager) {
+            @Override
+            public void onLoadMore(int page, final int totalItemsCount, final RecyclerView view) {
+                loadMovies(page, mSortType);
+                view.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mAdapter.notifyDataSetChanged();
+                    }
+                });
+            }
+        };
+
         if (savedInstanceState != null ) {
             if (savedInstanceState.containsKey(MOVIES_LIST_KEY)) {
 
@@ -91,18 +114,6 @@ public class MainActivity extends AppCompatActivity{
             loadMovies(API_DEFAULT_PAGE, mSortType);
         }
 
-        scrollListener = new EndlessRecyclerViewScrollListener((GridLayoutManager) layoutManager) {
-            @Override
-            public void onLoadMore(int page, final int totalItemsCount, final RecyclerView view) {
-                loadMovies(page, mSortType);
-                view.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        mAdapter.notifyDataSetChanged();
-                    }
-                });
-            }
-        };
 
         if (savedInstanceState!=null) {
             if (savedInstanceState.containsKey(CURRENT_PAGE_KEY)) {
@@ -140,32 +151,36 @@ public class MainActivity extends AppCompatActivity{
                 break;
             }
             case FAVORITES_TYPE:{
+                loadFavorites();
                 break;
             }
 
         }
-        movieResponsesCall.enqueue(new Callback<MovieResponses>() {
-            @Override
-            public void onResponse(Call<MovieResponses> call, Response<MovieResponses> response) {
 
-                if(response.isSuccessful()) {
-                    mAdapter.updateMovies(response.body().getMovies());
+        if (sortType!=FAVORITES_TYPE) {
+            movieResponsesCall.enqueue(new Callback<MovieResponses>() {
+                @Override
+                public void onResponse(Call<MovieResponses> call, Response<MovieResponses> response) {
 
-                }else {
-                    int statusCode  = response.code();
+                    if(response.isSuccessful()) {
+                        mAdapter.updateMovies(response.body().getMovies());
+
+                    }else {
+                        int statusCode  = response.code();
+
+                        // handle request errors depending on status code
+                        (Toast.makeText(MainActivity.this, "Check your connection and try again!", Toast.LENGTH_SHORT)).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<MovieResponses> call, Throwable t) {
 
                     // handle request errors depending on status code
                     (Toast.makeText(MainActivity.this, "Check your connection and try again!", Toast.LENGTH_SHORT)).show();
                 }
-            }
-
-            @Override
-            public void onFailure(Call<MovieResponses> call, Throwable t) {
-
-                // handle request errors depending on status code
-                (Toast.makeText(MainActivity.this, "Check your connection and try again!", Toast.LENGTH_SHORT)).show();
-            }
-        });
+            });
+        }
     }
 
     @Override
@@ -222,5 +237,35 @@ public class MainActivity extends AppCompatActivity{
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mSortType == FAVORITES_TYPE){
+            loadFavorites();
+        }
+    }
+
+    void loadFavorites(){
+        new AsyncTask<Void, Void, Void>(){
+            List<Movie> favoritesList = new ArrayList<>();
+            @Override
+            protected Void doInBackground(Void... params){
+                favoritesList.addAll(DbUtils.getFavorites(mContext));
+                return null;
+            }
+            @Override
+            protected void onPostExecute(Void aVoid){
+                super.onPostExecute(aVoid);
+                mAdapter.setmList(favoritesList);
+                mAdapter.notifyDataSetChanged();
+            }
+        }.execute();
     }
 }
