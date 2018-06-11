@@ -23,6 +23,12 @@
             </intent-filter>
         </activity>
         <activity android:name=".DetailsActivity"></activity>
+
+        <provider
+            android:authorities="io.bigsoft.android.popcorntime"
+            android:name="io.bigsoft.android.popcorntime.data.FavoritesContentProvider"
+            android:exported="false"/>
+
     </application>
 
 </manifest>
