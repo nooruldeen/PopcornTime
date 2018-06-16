@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,57 +14,12 @@ import io.bigsoft.android.popcorntime.model.Movie;
 public class DbUtils {
 
     /**
-     * Query the db and get all favorite movies
-     *
-     * @return Cursor containing the list of favorite movies
-     */
-
-
-    public static List<Movie> getFavorites(Context context){
-        FavoritesDbHelper dbHelper = new FavoritesDbHelper(context);
-        SQLiteDatabase database = dbHelper.getReadableDatabase();
-        String sortOrder = MovieContract.MovieEntry._ID + " ASC";
-        List<Movie> favoriteList = new ArrayList<>();
-        Cursor cursor = database.query(
-                MovieContract.MovieEntry.TABLE_NAME,
-                null,
-                null,
-                null,
-                null,
-                null,
-                sortOrder
-        );
-
-        if (cursor.moveToFirst()){
-            do {
-                Movie movie = new Movie();
-                movie.setId(Integer.parseInt(cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_ID))));
-                movie.setTitle(cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_TITLE)));
-                movie.setVoteAverage(cursor.getDouble(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE)));
-                movie.setPosterPath(cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_POSTER_PATH)));
-                movie.setOverview(cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_OVERVIEW)));
-                movie.setReleaseDate(cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_RELEASE_DATE)));
-                movie.setBackdropPath(cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_BACKDROP_PATH)));
-                favoriteList.add(movie);
-            }while(cursor.moveToNext());
-        }
-        cursor.close();
-        database.close();
-
-        return favoriteList;
-    }
-
-    /**
      * Adds a new movie to favorites including the title and poster path
      *
      * @param movie
-     * @return id of new record added
+     * @param context
      */
-    public static long addFavorite(Movie movie, Context context) {
-        FavoritesDbHelper dbHelper = new FavoritesDbHelper(context);
-        SQLiteDatabase database = dbHelper.getWritableDatabase();
-        long results;
-
+    public static void addFavorite(Movie movie, Context context) {
         ContentValues cv = new ContentValues();
         cv.put(MovieContract.MovieEntry.COLUMN_ID, movie.getId());
         cv.put(MovieContract.MovieEntry.COLUMN_TITLE, movie.getTitle());
@@ -73,10 +29,7 @@ public class DbUtils {
         cv.put(MovieContract.MovieEntry.COLUMN_BACKDROP_PATH, movie.getBackdropPath());
         cv.put(MovieContract.MovieEntry.COLUMN_POSTER_PATH, movie.getPosterPath());
 
-        results = database.insert(MovieContract.MovieEntry.TABLE_NAME, null, cv);
-        database.close();
-
-        return results;
+        context.getContentResolver().insert(MovieContract.MovieEntry.CONTENT_URI, cv);
     }
 
 
@@ -85,41 +38,30 @@ public class DbUtils {
      * Removes the record with the specified id
      *
      * @param id the Movie id to be removed
-     * @return True: if removed successfully, False: if failed
+     * @param context
      */
-    public static boolean removeFavorite(int id, Context context) {
-        FavoritesDbHelper dbHelper = new FavoritesDbHelper(context);
-        SQLiteDatabase database = dbHelper.getWritableDatabase();
-        boolean results;
-        results = database.delete(MovieContract.MovieEntry.TABLE_NAME, MovieContract.MovieEntry.COLUMN_ID + "=" + id, null) > 0;
-        database.close();
-        return results;
+    public static void removeFavorite(int id, Context context) {
+        Uri uri = MovieContract.MovieEntry.CONTENT_URI;
+        context.getContentResolver().delete(uri.buildUpon().appendPath(Integer.toString(id)).build(), null, null);
     }
 
     // isFavorite function to check if movie is a favorite or not that takes id as input and returns boolean
     /**
      * Checks if movie with the specified id is in the favorites
      *
-     * @param id the Movie id to be removed
-     * @return True: if removed successfully, False: if failed
+     * @param id the Movie id to be checked
+     * @return True: if exists, False: if not
      */
     public static boolean isFavorite(int id, Context context) {
-        FavoritesDbHelper dbHelper = new FavoritesDbHelper(context);
-        SQLiteDatabase database = dbHelper.getReadableDatabase();
-        boolean results;
-        if (database.query(
-                MovieContract.MovieEntry.TABLE_NAME,
-                null,
-                MovieContract.MovieEntry.COLUMN_ID+" = "+id,
-                null,
-                null,
-                null,
-                null
-        ).getCount()>0){
-            database.close();
+
+        Uri uri = MovieContract.MovieEntry.CONTENT_URI;
+        if (context.getContentResolver().query(uri.buildUpon().appendPath(Integer.toString(id)).build()
+        , null
+        , null
+        , null
+        , null).getCount()>0){
             return true;
-        }else {
-            database.close();
+        } else {
             return false;
         }
     }
