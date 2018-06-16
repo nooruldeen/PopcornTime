@@ -204,4 +204,9 @@ public class DetailsActivity extends AppCompatActivity {
             mFab.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_favorite_border));
         }
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
 }
