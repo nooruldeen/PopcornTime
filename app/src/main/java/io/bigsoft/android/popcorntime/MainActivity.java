@@ -1,17 +1,18 @@
 package io.bigsoft.android.popcorntime;
 
-import android.content.AsyncTaskLoader;
 import android.content.Context;
 import android.content.res.Configuration;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
-import android.os.AsyncTask;
+import android.database.Cursor;
 import android.os.Parcelable;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -22,9 +23,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.bigsoft.android.popcorntime.adapter.MoviesAdapter;
-import io.bigsoft.android.popcorntime.api.ApiUtilities;
 import io.bigsoft.android.popcorntime.api.TMDBService;
-import io.bigsoft.android.popcorntime.data.DbUtils;
 import io.bigsoft.android.popcorntime.data.MovieContract;
 import io.bigsoft.android.popcorntime.model.Movie;
 import io.bigsoft.android.popcorntime.model.MovieResponses;
@@ -34,7 +33,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity{
+public class MainActivity extends AppCompatActivity implements
+        LoaderManager.LoaderCallbacks<Cursor> {
 
 
     @BindView(R.id.toolbar)
@@ -60,6 +60,7 @@ public class MainActivity extends AppCompatActivity{
     private static final String CURRENT_PAGE_KEY = "current_page";
     private static final String SORT_TYPE_KEY = "sort_type";
     private static final String MOVIES_LIST_KEY = "movies_list";
+    private static final int FAVORITES_LOADER_ID = 0;
     private static final String TAG = MainActivity.class.getSimpleName();
 
     @Override
@@ -151,7 +152,11 @@ public class MainActivity extends AppCompatActivity{
                 break;
             }
             case FAVORITES_TYPE:{
-                loadFavorites();
+                /*
+                Ensure a loader is initialized and active. If the loader doesn't already exist, one is
+                created, otherwise the last created loader is re-used.
+                */
+                getSupportLoaderManager().initLoader(FAVORITES_LOADER_ID, null, this);
                 break;
             }
 
@@ -232,7 +237,13 @@ public class MainActivity extends AppCompatActivity{
                     mAdapter.ClearList();
                     mAdapter.notifyDataSetChanged();
                     scrollListener.resetState();
-                    loadMovies(API_DEFAULT_PAGE, mSortType);
+//                    loadMovies(API_DEFAULT_PAGE, mSortType);
+
+                    /*
+                    Ensure a loader is initialized and active. If the loader doesn't already exist, one is
+                    created, otherwise the last created loader is re-used.
+                    */
+                    getSupportLoaderManager().initLoader(FAVORITES_LOADER_ID, null, this);
                 }
                 break;
         }
@@ -248,24 +259,116 @@ public class MainActivity extends AppCompatActivity{
     protected void onResume() {
         super.onResume();
         if (mSortType == FAVORITES_TYPE){
-            loadFavorites();
+//            loadFavorites();
+        // re-queries for all tasks
+        getSupportLoaderManager().restartLoader(FAVORITES_LOADER_ID, null, this);
         }
     }
 
-    void loadFavorites(){
-        new AsyncTask<Void, Void, Void>(){
-            List<Movie> favoritesList = new ArrayList<>();
+    /**
+     * Instantiates and returns a new AsyncTaskLoader with the given ID.
+     * This loader will return task data as a Cursor or null if an error occurs.
+     *
+     * Implements the required callbacks to take care of loading data at all stages of loading.
+     */
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, final Bundle loaderArgs) {
+
+        return new AsyncTaskLoader<Cursor>(this) {
+
+            // Initialize a Cursor, this will hold all the task data
+            Cursor mTaskData = null;
+
+            // onStartLoading() is called when a loader first starts loading data
             @Override
-            protected Void doInBackground(Void... params){
-                favoritesList.addAll(DbUtils.getFavorites(mContext));
-                return null;
+            protected void onStartLoading() {
+                if (mTaskData != null) {
+                    // Delivers any previously loaded data immediately
+                    deliverResult(mTaskData);
+                } else {
+                    // Force a new load
+                    forceLoad();
+                }
             }
+
+            // loadInBackground() performs asynchronous loading of data
             @Override
-            protected void onPostExecute(Void aVoid){
-                super.onPostExecute(aVoid);
-                mAdapter.setmList(favoritesList);
+            public Cursor loadInBackground() {
+                // Will implement to load data
+
+                // Query and load all task data in the background; sort by priority
+                // [Hint] use a try/catch block to catch any errors in loading data
+
+                try {
+                    List<Movie> favoriteList = new ArrayList<>();
+                    Cursor cursor = getContentResolver().query(
+                            MovieContract.MovieEntry.CONTENT_URI,
+                            null,
+                            null,
+                            null,
+                            MovieContract.MovieEntry._ID
+                    );
+
+                    return cursor;
+                } catch (Exception e) {
+                    Log.e(TAG, "Failed to asynchronously load data.");
+                    e.printStackTrace();
+                    return null;
+                }
+            }
+
+            // deliverResult sends the result of the load, a Cursor, to the registered listener
+            public void deliverResult(Cursor data) {
+                mTaskData = data;
+                super.deliverResult(data);
+            }
+        };
+
+    }
+
+
+    /**
+     * Called when a previously created loader has finished its load.
+     *
+     * @param loader The Loader that has finished.
+     * @param cursor The data generated by the Loader.
+     */
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        // Update the data that the adapter uses to create ViewHolders
+        List<Movie> favoriteList = new ArrayList<>();
+        if (cursor.moveToFirst()){
+            do {
+                Movie movie = new Movie();
+                movie.setId(Integer.parseInt(cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_ID))));
+                movie.setTitle(cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_TITLE)));
+                movie.setVoteAverage(cursor.getDouble(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE)));
+                movie.setPosterPath(cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_POSTER_PATH)));
+                movie.setOverview(cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_OVERVIEW)));
+                movie.setReleaseDate(cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_RELEASE_DATE)));
+                movie.setBackdropPath(cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_BACKDROP_PATH)));
+                favoriteList.add(movie);
+            }while(cursor.moveToNext());
+        }
+        mAdapter.setmList(favoriteList);
+        mRecyclerView.post(new Runnable() {
+            @Override
+            public void run() {
                 mAdapter.notifyDataSetChanged();
             }
-        }.execute();
+        });
+    }
+
+
+    /**
+     * Called when a previously created loader is being reset, and thus
+     * making its data unavailable.
+     * onLoaderReset removes any references this activity had to the loader's data.
+     *
+     * @param loader The Loader that is being reset.
+     */
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        mAdapter.setmList(new ArrayList<Movie>());
     }
 }
